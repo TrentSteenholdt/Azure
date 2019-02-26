@@ -1,0 +1,82 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "companyCode": {
+            "type": "string",
+            "defaultValue": "RDY"
+        },
+        "companyName": {
+            "type": "string",
+            "defaultValue": "Readify"
+        },
+        "resourceType": {
+            "type": "string",
+            "defaultValue": "Administration"
+        },
+        "environmentCode": {
+            "type": "string",
+            "defaultValue": "DEV"
+        },
+        "environmentLongName": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard_LRS"
+        },
+        "kind": {
+            "type": "string",
+            "defaultValue": "StorageV2",
+            "allowedValues": [
+                "Storage",
+                "StorageV2"
+            ]
+        },
+        "httpsOnly":{
+            "type": "bool"
+        },
+        "azureLocation": {
+            "type": "string",
+            "defaultValue": "australiaeast",
+            "allowedValues": [
+                "australiaeast",
+                "australiasoutheast"
+            ]
+        },
+        "count": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 9
+        }
+    },
+    "variables": {
+        "staName": "[toLower(concat(parameters('companyCode'),parameters('environmentCode'),'sta00'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(variables('staName'), add(copyIndex(),1)]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('azureLocation')]",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[parameters('count')]"
+            },
+            "tags": {
+                "storageType": "[parmeters('sku')]",
+                "version": "[if(equals(parameters('kind'), 'Version2', 'Version1')]"
+
+            },
+            "apiVersion": "2017-10-01",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties":{
+                "supportsHttpsTrafficOnly": "[parameters('httpsOnly')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
