@@ -9,13 +9,22 @@
             "value": "Readify"
         },
         "resourceType": {
-            "value": "Administration"
+            "value": "Storage Account"
+        },
+        "resourceCode": {
+            "value": "STA"
+        },
+        "azureLocation": {
+            "value": "australiaeast"
         },
         "environmentCode": {
             "value": "DEV"
         },
         "environmentLongName": {
             "value": "Development Environment"
+        },
+        "count": {
+            "value": 4
         },
         "sku": {
             "value": "Standard_LRS"
@@ -26,11 +35,8 @@
         "httpsOnly":{
             "value": true
         },
-        "azureLocation": {
-            "value": "australiaeast"
-        },
-        "count": {
-            "value": 1
+        "hnsEnabled": {
+            "value": true
         }
     }
 }

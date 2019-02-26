@@ -1,0 +1,100 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "companyCode": {
+            "type": "string",
+            "maxLength": 4
+        },
+        "companyName": {
+            "type": "string",
+            "maxLength": 128
+        },
+        "resourceType": {
+            "type": "string",
+            "maxLength": 128
+        },
+        "resourceCode": {
+            "type": "string",
+            "maxLength": 4
+        },
+        "environmentCode": {
+            "type": "string",
+            "maxLength": 4
+        },
+        "environmentLongName": {
+            "type": "string",
+            "maxLength": 128
+        },
+        "azureLocation": {
+            "type": "string",
+            "defaultValue": "australiaeast",
+            "allowedValues": [
+                "australiaeast",
+                "australiasoutheast"
+            ]
+        },
+        "count": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_ZRS",
+                "Premium_LRS"
+            ]
+        },
+        "kind": {
+            "type": "string",
+            "defaultValue": "StorageV2",
+            "allowedValues": [
+                "Storage",
+                "StorageV2"
+            ]
+        },
+        "httpsOnly": {
+            "type": "bool"
+        },
+        "hnsEnabled": {
+            "type": "bool"
+        }
+    },
+    "variables": {
+        "staName": "[toLower(concat(parameters('companyCode'),parameters('environmentCode'),parameters('resourceCode'),variables('staType'),'00'))]",
+        "staTags": {
+            "Owner": "[parameters('companyName')]",
+            "Environment": "[parameters('environmentLongName')]",
+            "StorageType": "[parameters('sku')]",
+            "Version": "[if(equals(parameters('kind'), 'StorageV2'), 'Version2', 'Version1')]"
+        },
+        "staType": "[toLower(substring(parameters('sku'), add(lastIndexOf(parameters('sku'),'_'), 1)))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(variables('staName'), add(copyIndex(),1))]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('azureLocation')]",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[parameters('count')]"
+            },
+            "tags": "[variables('staTags')]",
+            "apiVersion": "2018-07-01",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "supportsHttpsTrafficOnly": "[parameters('httpsOnly')]",
+                "isHnsEnabled": "[parameters('hnsEnabled')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
